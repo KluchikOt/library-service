@@ -7,7 +7,6 @@ import lombok.*;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-
 @Getter
 @EqualsAndHashCode(of = "id")
 @ToString
