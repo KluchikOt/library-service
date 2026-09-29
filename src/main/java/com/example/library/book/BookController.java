@@ -1,6 +1,7 @@
 package com.example.library.book;
 
 import com.example.library.book.dto.BookCreateRequest;
+import com.example.library.book.dto.BookFilterDto;
 import com.example.library.book.dto.BookResponse;
 import com.example.library.book.dto.BookUpdateRequest;
 import jakarta.validation.Valid;
@@ -20,6 +21,11 @@ public class BookController {
         this.bookService = bookService;
     }
 
+    @GetMapping
+    public ResponseEntity<Page<BookResponse>> getBooks(Pageable pageable) {
+        Page<BookResponse> books = bookService.getBooks(pageable);
+        return ResponseEntity.ok(books);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<BookResponse> getBook(@PathVariable Long id) {
@@ -27,11 +33,11 @@ public class BookController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping
-    public ResponseEntity<Page<BookResponse>> getBooks(Pageable pageable) {
-        Page<BookResponse> books = bookService.getBooks(pageable);
-        return ResponseEntity.ok(books);
+    @GetMapping("/search")
+    public ResponseEntity<Page<BookResponse>> searchBooksByFilter(BookFilterDto filter, Pageable pageable) {
+        return ResponseEntity.ok(bookService.searchBooksByFilter(filter, pageable));
     }
+
 
     @PostMapping
     public ResponseEntity<BookResponse> createBook(@Valid @RequestBody BookCreateRequest request) {

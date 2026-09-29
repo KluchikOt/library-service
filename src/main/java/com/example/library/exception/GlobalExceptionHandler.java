@@ -85,5 +85,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(EmptyBookFilterException.class)
+    public ResponseEntity<ExceptionResponse> handleEmptyBookFilter(EmptyBookFilterException ex) {
+        ExceptionResponse resp = new ExceptionResponse(ex.getMessage() , LocalDateTime.now());
+        return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+    }
+
 }
 

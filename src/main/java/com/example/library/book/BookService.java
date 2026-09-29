@@ -1,13 +1,16 @@
 package com.example.library.book;
 
 import com.example.library.book.dto.BookCreateRequest;
+import com.example.library.book.dto.BookFilterDto;
 import com.example.library.book.dto.BookResponse;
 import com.example.library.book.dto.BookUpdateRequest;
+import com.example.library.exception.EmptyBookFilterException;
 import com.example.library.exception.ResourceAlreadyExistException;
 import com.example.library.exception.ResourceNotFoundException;
 import com.example.library.loan.LoanRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +59,28 @@ public class BookService {
         Book book = bookRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Книга с ID: " + id + " не найдена."));
         if(loanRepository.existsByBookId(id)) throw new ResourceAlreadyExistException("Ресурс используется, удалить нельзя");
         bookRepository.delete(book);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<BookResponse> searchBooksByFilter(BookFilterDto filter, Pageable pageable) {
+        if (filter.title() == null
+                && filter.author() == null
+                && filter.isbn() == null
+                && filter.publicationYear() == null
+                && filter.availability() == null) {
+            throw new EmptyBookFilterException("Параметр фильтрации не задан");
+        }
+
+        Specification<Book> spec = Specification.allOf(
+                BookSpecifications.hasTitle(filter.title()),
+                BookSpecifications.hasAuthor(filter.author()),
+                BookSpecifications.hasIsbn(filter.isbn()),
+                BookSpecifications.hasYear(filter.publicationYear()),
+                BookSpecifications.hasAvailability(filter.availability())
+        );
+
+        Page<Book> booksPage = bookRepository.findAll(spec, pageable);
+        return booksPage.map(bookMapper::toResponse);
     }
 
 }
