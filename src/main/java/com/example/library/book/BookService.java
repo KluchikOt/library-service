@@ -2,10 +2,14 @@ package com.example.library.book;
 
 import com.example.library.book.dto.BookCreateRequest;
 import com.example.library.book.dto.BookResponse;
+import com.example.library.book.dto.BookUpdateRequest;
 import com.example.library.exception.ResourceAlreadyExistException;
 import com.example.library.exception.ResourceNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
 public class BookService {
@@ -27,9 +31,27 @@ public class BookService {
 
     @Transactional(readOnly = true)
     public BookResponse getBookById(Long id) {
-        Book book = bookRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Неверный ID элемента:" + id));
+        Book book = bookRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Книга с ID: " + id + " не найдена."));
         return bookMapper.toResponse(book);
     }
 
+    @Transactional(readOnly = true)
+    public Page<BookResponse> getBooks(Pageable pageable) {
+        Page<Book> booksPage = bookRepository.findAll(pageable);
+        return booksPage.map(bookMapper::toResponse);
+    }
+
+    @Transactional
+    public BookResponse updateBook(Long id, BookUpdateRequest updateRequest) {
+        Book book = bookRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Книга с ID: " + id + " не найдена."));
+        book.updateData( updateRequest.title(), updateRequest.author(), updateRequest.publicationYear(), updateRequest.totalCopies());
+        return bookMapper.toResponse(book);
+    }
+
+    @Transactional
+    public void deleteBook(Long id) {
+        Book book = bookRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Книга с ID: " + id + " не найдена."));
+        bookRepository.delete(book);
+    }
 
 }

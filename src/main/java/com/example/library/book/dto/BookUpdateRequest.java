@@ -1,4 +1,11 @@
 package com.example.library.book.dto;
 
-public record BookUpdateRequest() {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
+public record BookUpdateRequest(@NotBlank(message = "Название книги не должно быть пустым") String title,
+                                @NotBlank(message = "Имя автора должно быть указано") String author,
+                                @NotNull(message = "Год публикации должен быть указан") Integer publicationYear,
+                                @NotNull(message = "Количество копий должно быть указано") @Positive(message = "Количество копий должно быть больше нуля") Integer totalCopies) {
 }

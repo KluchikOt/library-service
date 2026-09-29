@@ -2,7 +2,10 @@ package com.example.library.book;
 
 import com.example.library.book.dto.BookCreateRequest;
 import com.example.library.book.dto.BookResponse;
+import com.example.library.book.dto.BookUpdateRequest;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,13 +27,28 @@ public class BookController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping
+    public ResponseEntity<Page<BookResponse>> getBooks(Pageable pageable) {
+        Page<BookResponse> books = bookService.getBooks(pageable);
+        return ResponseEntity.ok(books);
+    }
+
     @PostMapping
     public ResponseEntity<BookResponse> createBook(@Valid @RequestBody BookCreateRequest request) {
         BookResponse response = bookService.createBook(request);
         return  ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    
+    @PutMapping("/{id}")
+    public ResponseEntity<BookResponse> updateBook(@PathVariable Long id, @Valid @RequestBody BookUpdateRequest updateRequest) {
+        BookResponse updatedBook =  bookService.updateBook(id, updateRequest);
+        return ResponseEntity.ok(updatedBook);
+    }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
+       bookService.deleteBook(id);
+        return ResponseEntity.noContent().build();
+    }
 
 }

@@ -1,5 +1,6 @@
 package com.example.library.book;
 
+import com.example.library.exception.AllBooksOnHandsException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -41,6 +42,19 @@ public class Book {
         this.publicationYear = publicationYear;
         this.totalCopies = totalCopies;
         this.availableCopies = totalCopies;
+    }
+
+    public void updateData(String newTitle, String newAuthor, int newPublicationYear, int newTotalCopies) {
+        int booksOnShelf = availableCopies + (newTotalCopies - totalCopies);
+        if(booksOnShelf < 0) {
+            throw new AllBooksOnHandsException("Нельзя уменьшить общее количество копий ниже числа выданных книг");
+        }
+        title = newTitle;
+        author = newAuthor;
+        publicationYear = newPublicationYear;
+        availableCopies = booksOnShelf;
+        totalCopies = newTotalCopies;
+
     }
 
 }
