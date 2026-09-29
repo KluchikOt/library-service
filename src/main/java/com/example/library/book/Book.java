@@ -28,10 +28,13 @@ public class Book {
 
     @Column(nullable = false, length = 13)
     private String isbn;
+
     @Column(nullable = false)
     private int publicationYear;
+
     @Column(nullable = false)
     private int totalCopies;
+
     @Column(nullable = false)
     private int availableCopies;
 
