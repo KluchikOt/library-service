@@ -27,7 +27,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(resp, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler({ResourceAlreadyExistException.class, AllBooksOnHandsException.class})
+    @ExceptionHandler({ResourceAlreadyExistException.class, AllBooksOnHandsException.class, BookAlreadyReturnedException.class, ResourceInUseException.class})
     public ResponseEntity<ExceptionResponse> handleConflict(RuntimeException ex) {
         ExceptionResponse resp = new ExceptionResponse(ex.getMessage(), LocalDateTime.now());
         return new ResponseEntity<>(resp, HttpStatus.CONFLICT);
@@ -84,5 +84,6 @@ public class GlobalExceptionHandler {
         ExceptionResponse resp = new ExceptionResponse("Неизвестное поле: " + ex.getPropertyName(), LocalDateTime.now());
         return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
     }
+
 }
 

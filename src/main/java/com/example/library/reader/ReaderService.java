@@ -1,7 +1,9 @@
 package com.example.library.reader;
 
 
+import com.example.library.exception.ResourceAlreadyExistException;
 import com.example.library.exception.ResourceNotFoundException;
+import com.example.library.loan.LoanRepository;
 import com.example.library.reader.dto.ReaderCreateRequest;
 import com.example.library.reader.dto.ReaderResponse;
 import com.example.library.reader.dto.ReaderUpdateRequest;
@@ -15,10 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReaderService {
     private final ReaderRepository readerRepository;
     private final ReaderMapper readerMapper;
+    private final LoanRepository loanRepository;
 
-    public ReaderService(ReaderRepository readerRepository, ReaderMapper readerMapper) {
+    public ReaderService(ReaderRepository readerRepository, ReaderMapper readerMapper, LoanRepository loanRepository) {
         this.readerRepository = readerRepository;
         this.readerMapper = readerMapper;
+        this.loanRepository = loanRepository;
     }
 
     @Transactional
@@ -45,6 +49,7 @@ public class ReaderService {
     @Transactional
     public void deleteReader(Long id) {
         Reader reader = readerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Читатель с ID: " + id + " не найден."));
+        if(loanRepository.existsByReaderId(id)) throw new ResourceAlreadyExistException("Ресурс используется, удалить нельзя");
         readerRepository.delete(reader);
     }
 

@@ -4,15 +4,14 @@ import com.example.library.exception.AllBooksOnHandsException;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Objects;
 
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@EqualsAndHashCode(of = "id")
-@ToString
 @Table(
-        name = "books",
+        name = "Books",
         uniqueConstraints = @UniqueConstraint(name = "uq_books_isbn", columnNames = {"isbn"})
 )
 public class Book {
@@ -38,6 +37,7 @@ public class Book {
     @Column(nullable = false)
     private int availableCopies;
 
+
     public Book(String title, String author, String isbn, int publicationYear, int totalCopies) {
         this.title = title;
         this.author = author;
@@ -45,6 +45,32 @@ public class Book {
         this.publicationYear = publicationYear;
         this.totalCopies = totalCopies;
         this.availableCopies = totalCopies;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(!(o instanceof Book)) return false;
+        Book book = (Book) o;
+        return Objects.equals(getIsbn(), book.getIsbn());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getIsbn());
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", author='" + author + '\'' +
+                ", isbn='" + isbn + '\'' +
+                ", publicationYear=" + publicationYear +
+                ", totalCopies=" + totalCopies +
+                ", availableCopies=" + availableCopies +
+                '}';
     }
 
     public void updateData(String newTitle, String newAuthor, int newPublicationYear, int newTotalCopies) {
@@ -59,5 +85,18 @@ public class Book {
         totalCopies = newTotalCopies;
 
     }
+
+    public void bookReturned() {
+        if(availableCopies + 1 > totalCopies) throw new IllegalStateException();
+        this.availableCopies += 1;
+    }
+
+    public void bookGiven() {
+        if(availableCopies == 0) {
+            throw new AllBooksOnHandsException("Книг больше не осталось, зайдите позже");
+        }
+        this.availableCopies -= 1;
+    }
+
 
 }
