@@ -6,6 +6,7 @@ import com.example.library.book.dto.BookResponse;
 import com.example.library.book.dto.BookUpdateRequest;
 import com.example.library.exception.EmptyBookFilterException;
 import com.example.library.exception.ResourceAlreadyExistException;
+import com.example.library.exception.ResourceInUseException;
 import com.example.library.exception.ResourceNotFoundException;
 import com.example.library.loan.LoanRepository;
 import org.springframework.data.domain.Page;
@@ -57,7 +58,7 @@ public class BookService {
     @Transactional
     public void deleteBook(Long id) {
         Book book = bookRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Книга с ID: " + id + " не найдена."));
-        if(loanRepository.existsByBookId(id)) throw new ResourceAlreadyExistException("Ресурс используется, удалить нельзя");
+        if(loanRepository.existsByBookId(id)) throw new ResourceInUseException("Ресурс используется, удалить нельзя");
         bookRepository.delete(book);
     }
 

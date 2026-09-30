@@ -31,7 +31,7 @@ public class LoanService {
 
     @Transactional
     public LoanResponse returnBook(Long id) {
-        Loan loan = loanRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Loan с ID: " + id + " не найден."));
+        Loan loan = loanRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Выдача с ID: " + id + " не найден."));
         loan.loanReturn();
         loan.getBook().bookReturned();
         return loanMapper.toResponse(loan);

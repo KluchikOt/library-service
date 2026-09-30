@@ -5,7 +5,6 @@ import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -47,17 +46,10 @@ public class GlobalExceptionHandler {
 
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ExceptionResponse> handleException(Exception ex) {
-        log.error("Unhandled exception", ex);
-        ExceptionResponse resp = new ExceptionResponse("Непредвиденная ошибка", LocalDateTime.now());
-        return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ExceptionResponse> handleWrongJson(HttpMessageNotReadableException ex) {
-        ExceptionResponse resp = new ExceptionResponse("Некорректный JSON", LocalDateTime.now());
+        ExceptionResponse resp = new ExceptionResponse("Ошибка в структуре JSON", LocalDateTime.now());
         return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
     }
 
@@ -69,7 +61,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ExceptionResponse> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
-        ExceptionResponse resp = new ExceptionResponse(ex.getMessage(), LocalDateTime.now());
+        ExceptionResponse resp = new ExceptionResponse("Метод запроса не поддерживается для данного случая", LocalDateTime.now());
         return new ResponseEntity<>(resp, HttpStatus.METHOD_NOT_ALLOWED);
     }
 
@@ -91,5 +83,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ExceptionResponse> handleException(Exception ex) {
+        log.error("Unhandled exception", ex);
+        ExceptionResponse resp = new ExceptionResponse("Непредвиденная ошибка", LocalDateTime.now());
+        return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
 

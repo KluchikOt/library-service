@@ -1,12 +1,9 @@
 package com.example.library.reader.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 
 public record ReaderUpdateRequest(
-        @NotBlank(message = "Фамилия читателя должна быть указана") String lastName,
-        @NotBlank(message = "Email должен быть указан") @Email String email,
+        @NotBlank(message = "Фамилия читателя должна быть указана") @Size(max = 255, message = "Длина не больше 255 символов") String lastName,
+        @NotBlank(message = "Email должен быть указан") @Size(max = 255, message = "Длина не больше 255 символов") @Email String email,
         @NotNull(message = "Телефон должен быть указан") @Pattern(message = "Номер телефона должен начинаться с +, и содержать 11 цифр", regexp = "^\\+\\d{11}$") String phoneNumber) {
 }
