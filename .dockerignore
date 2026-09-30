@@ -1,0 +1,7 @@
+# Что не отправлять в Docker при сборке образа
+target/
+.idea/
+*.iml
+.git/
+postman/
+.postman/

@@ -1,0 +1,13 @@
+services:
+  app:
+    # Собрать образ по Dockerfile из текущей папки
+    build: .
+    container_name: library-service
+    ports:
+      # Слева порт на компьютере, справа порт внутри контейнера
+      - "8080:8080"
+    environment:
+      # Тот же профиль, что при локальном запуске
+      SPRING_PROFILES_ACTIVE: dev
+      # Разрешить вход в H2-консоль с компьютера (из контейнера H2 видит это как удалённое подключение)
+      SPRING_H2_CONSOLE_SETTINGS_WEBALLOWOTHERS: "true"
